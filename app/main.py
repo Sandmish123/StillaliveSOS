@@ -1,0 +1,63 @@
+import os
+from fastapi import FastAPI, Request
+from app.core import config  # noqa: F401
+from app.core.database import Base, engine
+from app.models.user import User  # noqa
+from app.models.checkin import Check_In  # noqa
+from app.models.emergency_contact import EmergencyContacts  # noqa
+from app.models.otp import OTPRequest  # noqa
+from app.models.safety_setting import SafetySetting  # noqa
+from app.models.sos_event import SOSEvent  # noqa
+from app.models.location import UserLocation  # noqa
+from app.routers import location
+from app.routers import user, auth, emergency_contact, checkin, safety_setting, admin,sos
+from fastapi.staticfiles import StaticFiles
+from app.core.logging_config import setup_logging
+
+
+app = FastAPI(title="StillAlive-SOS Backend")
+app.include_router(user.router)
+app.include_router(auth.router)
+app.include_router(emergency_contact.router)
+app.include_router(checkin.router)
+app.include_router(safety_setting.router)
+app.include_router(admin.router)
+app.include_router(location.router)
+app.include_router(sos.router)
+
+setup_logging()
+
+# -----------------------------
+# Startup Event (Table Creation)
+# -----------------------------
+@app.on_event("startup")
+def startup():
+    Base.metadata.create_all(bind=engine)
+
+
+# -----------------------------
+# Health Check
+# -----------------------------
+@app.get("/")
+def health_check():
+    return {"status": "alive"}
+
+
+# -----------------------------
+# Static Files
+# -----------------------------
+app.mount("/media", StaticFiles(directory="app/media"), name="media")
+
+
+# -----------------------------
+# Dynamic Pattern URL (No Hardcoded localhost)
+# -----------------------------
+@app.get("/pattern/{name}")
+def get_pattern(name: str, request: Request):
+    base_url = str(request.base_url).rstrip("/")
+
+    return {
+        "partId": "slide",
+        "type": "pattern",
+        "url": f"{base_url}/media/{name}.png"
+    }

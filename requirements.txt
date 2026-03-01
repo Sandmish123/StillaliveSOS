@@ -1,0 +1,15 @@
+requests
+pytest
+fastapi
+uvicorn
+pytest
+flake8
+httpx
+sqlalchemy
+psycopg2-binary
+python-dotenv
+pydantic
+python-jose
+passlib
+psycopg2-binary
+passlib[bcrypt]
