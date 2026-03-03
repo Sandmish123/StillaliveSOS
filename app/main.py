@@ -10,6 +10,7 @@ from app.models.safety_setting import SafetySetting  # noqa
 from app.models.sos_event import SOSEvent  # noqa
 from app.models.location import UserLocation  # noqa
 from app.routers import location
+from app.routers import legal
 from app.routers import user, auth, emergency_contact, checkin, safety_setting, admin,sos
 from fastapi.staticfiles import StaticFiles
 from app.core.logging_config import setup_logging
@@ -24,7 +25,7 @@ app.include_router(safety_setting.router)
 app.include_router(admin.router)
 app.include_router(location.router)
 app.include_router(sos.router)
-
+app.include_router(legal.router, prefix="/legal", tags=["Legal"])
 setup_logging()
 
 # -----------------------------
