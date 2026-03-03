@@ -1,7 +1,6 @@
 from sqlalchemy import Column, String, Boolean, DateTime
-from datetime import datetime, timedelta
 from app.core.database import Base
-
+from datetime import datetime, timedelta, timezone
 
 class OTPRequest(Base):
     __tablename__ = "otp_requests"
@@ -9,8 +8,8 @@ class OTPRequest(Base):
     phone = Column(String, primary_key=True)
     otp = Column(String, nullable=False)
     verified = Column(Boolean, default=False)
-    expires_at = Column(DateTime, nullable=False)
+    expires_at = Column(DateTime(timezone=True), nullable=False)
 
     @staticmethod
     def expiry_time():
-        return datetime.utcnow() + timedelta(minutes=5)
+        return datetime.now(timezone.utc) + timedelta(minutes=5)

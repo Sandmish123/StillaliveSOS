@@ -1,6 +1,9 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+
+from fastapi import HTTPException
+from uuid import UUID
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
 from app.models.emergency_contact import EmergencyContacts
@@ -54,3 +57,29 @@ def list_contacts(
         "message": "Contact retrieve successfully",
         "data": contacts,
     }
+
+
+
+@router.delete("/{contact_id}")
+def delete_contact(
+    contact_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+
+    contact = (
+        db.query(EmergencyContacts)
+        .filter(
+            EmergencyContacts.id == contact_id,
+            EmergencyContacts.user_id == current_user.id,
+        )
+        .first()
+    )
+
+    if not contact:
+        raise HTTPException(status_code=404, detail="Contact not found")
+
+    db.delete(contact)
+    db.commit()
+
+    return {"message": "Contact deleted successfully"}

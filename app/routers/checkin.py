@@ -1,12 +1,14 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-
-
+from datetime import datetime, timedelta
+from app.models.safety_setting import SafetySetting
+from datetime import timezone
+import pytz
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
 from app.models.checkin import Check_In
 from app.models.user import User
-
+from datetime import datetime, timezone
 
 router = APIRouter(
     prefix="/checkin",
@@ -14,15 +16,51 @@ router = APIRouter(
 )
 
 
+
+
 @router.post("/")
 def check_in(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    check_in = Check_In(user_id=current_user.id)
-    db.add(check_in)
+    now = datetime.now(timezone.utc)
+    # Get user safety settings
+    settings = (
+        db.query(SafetySetting)
+        .filter(SafetySetting.user_id == current_user.id)
+        .first()
+    )
+
+    interval = settings.checkin_interval_hour if settings else 24
+
+    # Get last check-in
+    last_checkin = (
+        db.query(Check_In)
+        .filter(Check_In.user_id == current_user.id)
+        .order_by(Check_In.checked_in_at.desc())
+        .first()
+    )
+
+    if last_checkin:
+        next_allowed = last_checkin.checked_in_at + timedelta(hours=interval)
+
+        if now < next_allowed:
+            remaining = next_allowed - now
+            return {
+                "allowed": False,
+                "message": "Check-in not allowed yet",
+                "next_allowed_at": next_allowed,
+                "remaining_minutes": int(remaining.total_seconds() / 60)
+            }
+
+    # Allow check-in
+    new_checkin = Check_In(user_id=current_user.id)
+    db.add(new_checkin)
     db.commit()
-    return {"message": "Check-in successful"}
+
+    return {"allowed": True, "message": "Check-in successful"}
+
+
 
 @router.get("/last")
 def last_checkin(
@@ -36,6 +74,11 @@ def last_checkin(
         .first()
     )
 
-    if not check_in:
+    if not checkin:
         return {"last_checkin": None}
-    return {"last_checkin": checkin.checked_in_at}
+
+    # Convert UTC to IST
+    ist = pytz.timezone("Asia/Kolkata")
+    local_time = checkin.checked_in_at.astimezone(ist)
+
+    return {"last_checkin": local_time}

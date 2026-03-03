@@ -8,17 +8,25 @@ from app.core.security import create_access_token
 from app.models.user import User
 from app.models.otp import OTPRequest
 from app.schemas.auth import OTPVerifyIn, OTPRequestIn, TokenOut
+from app.services.phone_verification import verify_phone_number
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 #need to change the flow of request otp and verify otp
 @router.post("/request_otp")
 def request_otp(data: OTPRequestIn, db: Session = Depends(get_db)):
-    otp = str(random.randint(100000, 999999))
+
+    #  Step 1 — Verify phone number first
+    verify_phone_number(data.phone)
+
+    #  Step 2 — Generate secure OTP
+    import secrets
+    otp = str(secrets.randbelow(900000) + 100000)
 
     record = db.query(OTPRequest).filter(
         OTPRequest.phone == data.phone
-        ).first()
+    ).first()
+
     if record:
         record.otp = otp
         record.expires_at = OTPRequest.expiry_time()
@@ -40,6 +48,7 @@ def request_otp(data: OTPRequestIn, db: Session = Depends(get_db)):
 
     # MOCK OTP RESPONSE (for learning only)
     return {"message": "OTP sent", "otp": otp}
+
 
 
 @router.post("/verify_otp", response_model=TokenOut)
