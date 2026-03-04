@@ -82,7 +82,7 @@ def create_refresh_token(subject: str, user_id: UUID):
 # -----------------------
 # Decode Token
 # -----------------------
-def decode_token(token: str):
+def decode_access_token(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         return payload
