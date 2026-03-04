@@ -17,7 +17,6 @@ router = APIRouter(
 
 
 
-
 @router.post("/")
 def check_in(
     db: Session = Depends(get_db),
@@ -31,7 +30,8 @@ def check_in(
         .first()
     )
 
-    interval = settings.checkin_interval_hour if settings else 24
+    interval_hours = settings.checkin_interval_hour if settings and settings.checkin_interval_hour else 1
+    # interval_minutes = interval_hours * 60
 
     # Get last check-in
     last_checkin = (
@@ -42,7 +42,12 @@ def check_in(
     )
 
     if last_checkin:
-        next_allowed = last_checkin.checked_in_at + timedelta(hours=interval)
+        last_time = last_checkin.checked_in_at
+
+        if last_time.tzinfo is None:
+            last_time = last_time.replace(tzinfo=timezone.utc)
+
+        next_allowed = last_time + timedelta(hours=interval_hours)
 
         if now < next_allowed:
             remaining = next_allowed - now
@@ -52,7 +57,6 @@ def check_in(
                 "next_allowed_at": next_allowed,
                 "remaining_minutes": int(remaining.total_seconds() / 60)
             }
-
     # Allow check-in
     new_checkin = Check_In(user_id=current_user.id)
     db.add(new_checkin)
