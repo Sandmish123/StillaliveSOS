@@ -3,7 +3,6 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from fastapi import Body
-from app.core.security import decode_token
 from app.models.refresh_token import RefreshToken
 from uuid import UUID
 from app.core.security import create_access_token, create_refresh_token
@@ -24,7 +23,7 @@ from app.core.database import get_db
 from app.core.security import (
     create_access_token,
     create_refresh_token,
-    decode_token,
+    decode_access_token,
 )
 from app.models.user import User
 from app.models.otp import OTPRequest
@@ -129,7 +128,7 @@ def refresh_access_token(
     db: Session = Depends(get_db)
 ):
 
-    payload = decode_token(refresh_token)
+    payload = decode_access_token(refresh_token)
 
     if not payload or payload.get("type") != "refresh":
         raise HTTPException(status_code=401, detail="Invalid refresh token")
