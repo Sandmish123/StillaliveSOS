@@ -1,4 +1,6 @@
 import os
+
+from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi import FastAPI, Request
 from app.core import config  # noqa: F401
@@ -17,7 +19,12 @@ from fastapi.staticfiles import StaticFiles
 from app.core.logging_config import setup_logging
 
 
-app = FastAPI(title="StillAlive-SOS Backend")
+app = FastAPI(
+    title="StillAlive-SOS Backend",
+    docs_url=None,
+    redoc_url=None,
+    openapi_url=None
+)
 app.include_router(user.router)
 app.include_router(auth.router)
 app.include_router(emergency_contact.router)
@@ -28,6 +35,42 @@ app.include_router(location.router)
 app.include_router(sos.router)
 app.include_router(legal.router, prefix="/legal", tags=["Legal"])
 setup_logging()
+
+
+
+PUBLIC_PATHS = [
+    "/health_check",
+    "/media",
+    "/pattern",
+    "/legal"
+]
+
+PRIVATE_API_KEY = os.getenv("PRIVATE_API_KEY")
+
+
+@app.middleware("http")
+async def restrict_access(request: Request, call_next):
+
+    path = request.url.path
+
+    # Allow homepage
+    if path == "/":
+        return await call_next(request)
+
+    # Allow public paths
+    if any(path.startswith(p) for p in PUBLIC_PATHS):
+        return await call_next(request)
+
+    # Check API key for private routes
+    api_key = request.headers.get("X-API-KEY")
+
+    if api_key != PRIVATE_API_KEY:
+        return JSONResponse(
+            status_code=403,
+            content={"message": "Forbidden - Private API"}
+        )
+
+    return await call_next(request)
 
 # -----------------------------
 # Startup Event (Table Creation)
