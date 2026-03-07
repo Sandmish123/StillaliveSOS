@@ -14,3 +14,4 @@ passlib
 psycopg2-binary
 passlib[bcrypt]
 pytz
+jinja2
