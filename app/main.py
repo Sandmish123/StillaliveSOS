@@ -1,4 +1,5 @@
 import os
+from fastapi.templating import Jinja2Templates
 from fastapi import FastAPI, Request
 from app.core import config  # noqa: F401
 from app.core.database import Base, engine
@@ -35,11 +36,18 @@ setup_logging()
 def startup():
     Base.metadata.create_all(bind=engine)
 
+# -----------------------------
+# First Page
+# -----------------------------
+templates = Jinja2Templates(directory="app/templates")
+@app.get("/")
+def home(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 # -----------------------------
 # Health Check
 # -----------------------------
-@app.get("/")
+@app.get("/health_check")
 def health_check():
     return {"status": "alive"}
 

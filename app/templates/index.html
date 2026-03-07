@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>StillAlive — A Society That Cares</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg:        #070b12;
+    --bg2:       #0d1420;
+    --pulse:     #ff5f3f;
+    --pulse2:    #ff9a3c;
+    --green:     #3cffb0;
+    --text:      #e8eaf2;
+    --muted:     #6b7a99;
+    --card:      rgba(255,255,255,0.04);
+    --border:    rgba(255,255,255,0.08);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.5;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.4rem 6vw;
+    background: rgba(7,11,18,0.7);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    text-decoration: none;
+  }
+
+  .logo-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--pulse);
+    box-shadow: 0 0 12px var(--pulse);
+    animation: blink 1.8s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    letter-spacing: 0.04em;
+    color: var(--text);
+  }
+
+  .logo-text span { color: var(--pulse); }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 2.5rem;
+  }
+
+  nav ul a {
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 0.88rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+
+  nav ul a:hover { color: var(--text); }
+
+  .nav-cta {
+    background: var(--pulse);
+    color: #fff !important;
+    padding: 0.45rem 1.2rem;
+    border-radius: 100px;
+    font-weight: 500 !important;
+    transition: box-shadow 0.3s !important;
+  }
+
+  .nav-cta:hover { box-shadow: 0 0 20px rgba(255,95,63,0.5) !important; color: #fff !important; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: 10rem 6vw 6rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* radial glow */
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80vw; height: 60vw;
+    background: radial-gradient(ellipse, rgba(255,95,63,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255,95,63,0.1);
+    border: 1px solid rgba(255,95,63,0.3);
+    color: var(--pulse2);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(3rem, 8vw, 7rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.9s 0.1s ease both;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--pulse), var(--pulse2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    max-width: 580px;
+    margin: 0 auto 3rem;
+    color: var(--muted);
+    font-size: 1.08rem;
+    animation: fadeUp 1s 0.2s ease both;
+  }
+
+  .hero-btns {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    animation: fadeUp 1.1s 0.3s ease both;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--pulse), var(--pulse2));
+    color: #fff;
+    padding: 0.85rem 2.2rem;
+    border-radius: 100px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: transform 0.2s, box-shadow 0.3s;
+    box-shadow: 0 4px 30px rgba(255,95,63,0.35);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 40px rgba(255,95,63,0.5);
+  }
+
+  .btn-ghost {
+    color: var(--text);
+    padding: 0.85rem 2.2rem;
+    border-radius: 100px;
+    text-decoration: none;
+    font-weight: 400;
+    font-size: 0.95rem;
+    border: 1px solid var(--border);
+    transition: border-color 0.3s, background 0.3s;
+  }
+
+  .btn-ghost:hover {
+    border-color: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.04);
+  }
+
+  /* ── HEARTBEAT SVG ── */
+  .heartbeat-wrap {
+    width: 100%;
+    max-width: 700px;
+    margin: 4rem auto 0;
+    position: relative;
+    animation: fadeUp 1.2s 0.4s ease both;
+  }
+
+  .heartbeat-wrap svg { width: 100%; overflow: visible; }
+
+  .hb-line {
+    fill: none;
+    stroke: url(#hbGrad);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: drawLine 2.5s 1s ease forwards, hbPulse 3s 3.5s ease-in-out infinite;
+  }
+
+  @keyframes drawLine {
+    to { stroke-dashoffset: 0; }
+  }
+
+  @keyframes hbPulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  /* ── STATS ── */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stat {
+    background: var(--bg);
+    padding: 3rem 2rem;
+    text-align: center;
+    transition: background 0.3s;
+  }
+
+  .stat:hover { background: var(--bg2); }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 3.2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--pulse), var(--pulse2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label { color: var(--muted); font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; }
+
+  /* ── SECTIONS ── */
+  section { padding: 7rem 6vw; }
+
+  .section-label {
+    display: inline-block;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--pulse);
+    margin-bottom: 1rem;
+    font-weight: 500;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.1;
+    margin-bottom: 1.2rem;
+    max-width: 620px;
+  }
+
+  .section-body {
+    color: var(--muted);
+    max-width: 540px;
+    font-size: 1rem;
+    line-height: 1.9;
+  }
+
+  /* ── MISSION ── */
+  .mission-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+
+  .mission-visual {
+    position: relative;
+    height: 420px;
+  }
+
+  .phone-mock {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 380px;
+    border: 2px solid rgba(255,95,63,0.4);
+    border-radius: 30px;
+    background: #0d1420;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem 1rem;
+    gap: 0.8rem;
+    box-shadow: 0 0 60px rgba(255,95,63,0.15), inset 0 0 40px rgba(255,95,63,0.05);
+  }
+
+  .phone-notch {
+    width: 60px; height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+  }
+
+  .phone-pulse-ring {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    border: 2px solid var(--pulse);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-top: 1rem;
+    animation: ringPulse 2s ease-in-out infinite;
+  }
+
+  .phone-pulse-ring::before {
+    content: '';
+    position: absolute;
+    inset: -12px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,95,63,0.3);
+    animation: ringPulse 2s 0.3s ease-in-out infinite;
+  }
+
+  .phone-pulse-ring::after {
+    content: '';
+    position: absolute;
+    inset: -26px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,95,63,0.15);
+    animation: ringPulse 2s 0.6s ease-in-out infinite;
+  }
+
+  @keyframes ringPulse {
+    0%,100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.08); opacity: 0.7; }
+  }
+
+  .pulse-icon {
+    font-size: 2rem;
+  }
+
+  .phone-status {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--green);
+    background: rgba(60,255,176,0.1);
+    padding: 0.25rem 0.7rem;
+    border-radius: 100px;
+    border: 1px solid rgba(60,255,176,0.2);
+  }
+
+  .phone-rows {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .phone-row {
+    height: 10px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.06);
+  }
+
+  .phone-row.active { background: rgba(255,95,63,0.25); width: 70%; }
+
+  .orbit {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px dashed rgba(255,95,63,0.2);
+  }
+
+  .orbit-1 { width: 280px; height: 280px; top: 50%; left: 50%; transform: translate(-50%,-50%); animation: spin 20s linear infinite; }
+  .orbit-2 { width: 380px; height: 380px; top: 50%; left: 50%; transform: translate(-50%,-50%); animation: spin 30s linear infinite reverse; }
+
+  .orbit-dot {
+    position: absolute;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--pulse);
+    top: -4px; left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 10px var(--pulse);
+  }
+
+  @keyframes spin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+
+  /* ── HOW IT WORKS ── */
+  .how-bg { background: var(--bg2); }
+
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-top: 4rem;
+  }
+
+  .step-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem 1.6rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s;
+    cursor: default;
+  }
+
+  .step-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--pulse), var(--pulse2));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+
+  .step-card:hover { transform: translateY(-4px); border-color: rgba(255,95,63,0.3); }
+  .step-card:hover::before { transform: scaleX(1); }
+
+  .step-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 3rem;
+    font-weight: 800;
+    color: rgba(255,95,63,0.12);
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+
+  .step-icon {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .step-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.6rem;
+    color: var(--text);
+  }
+
+  .step-desc { font-size: 0.87rem; color: var(--muted); line-height: 1.7; }
+
+  /* ── FEATURES ── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 4rem;
+  }
+
+  .feat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2.2rem 2rem;
+    transition: background 0.3s, border-color 0.3s, transform 0.3s;
+  }
+
+  .feat-card:hover {
+    background: rgba(255,95,63,0.05);
+    border-color: rgba(255,95,63,0.2);
+    transform: translateY(-3px);
+  }
+
+  .feat-icon-wrap {
+    width: 50px; height: 50px;
+    border-radius: 14px;
+    background: rgba(255,95,63,0.1);
+    display: grid;
+    place-items: center;
+    font-size: 1.4rem;
+    margin-bottom: 1.4rem;
+    transition: background 0.3s;
+  }
+
+  .feat-card:hover .feat-icon-wrap { background: rgba(255,95,63,0.2); }
+
+  .feat-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .feat-desc { font-size: 0.87rem; color: var(--muted); line-height: 1.75; }
+
+  .feat-tag {
+    display: inline-block;
+    margin-top: 1rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--pulse2);
+    background: rgba(255,154,60,0.1);
+    border: 1px solid rgba(255,154,60,0.2);
+    padding: 0.2rem 0.6rem;
+    border-radius: 100px;
+  }
+
+  /* ── TEAM ── */
+  .team-bg { background: var(--bg2); }
+
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: 4rem;
+  }
+
+  .team-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+
+  .team-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255,95,63,0.3);
+  }
+
+  .team-avatar {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    margin: 0 auto 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    background: linear-gradient(135deg, rgba(255,95,63,0.2), rgba(255,154,60,0.2));
+    border: 2px solid rgba(255,95,63,0.3);
+    color: var(--pulse2);
+  }
+
+  .team-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .team-role { font-size: 0.82rem; color: var(--pulse); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 1rem; }
+  .team-bio { font-size: 0.87rem; color: var(--muted); line-height: 1.7; }
+
+  /* ── MISSION STATEMENT ── */
+  .manifesto {
+    text-align: center;
+    padding: 8rem 6vw;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .manifesto::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(255,95,63,0.08) 0%, transparent 70%);
+  }
+
+  .manifesto blockquote {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+    line-height: 1.3;
+    max-width: 800px;
+    margin: 0 auto 1.5rem;
+    position: relative;
+  }
+
+  .manifesto blockquote em {
+    font-style: normal;
+    color: var(--pulse);
+  }
+
+  .manifesto cite {
+    font-size: 0.85rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-style: normal;
+  }
+
+  /* ── CTA ── */
+  .cta-section {
+    padding: 6rem 6vw;
+    background: var(--bg2);
+    text-align: center;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cta-section h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 1rem;
+  }
+
+  .cta-section p { color: var(--muted); margin-bottom: 2.5rem; max-width: 480px; margin-left: auto; margin-right: auto; }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 3rem 6vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-copy { font-size: 0.82rem; color: var(--muted); }
+  .footer-copy span { color: var(--pulse); }
+
+  .footer-links { display: flex; gap: 2rem; }
+  .footer-links a { font-size: 0.82rem; color: var(--muted); text-decoration: none; transition: color 0.3s; }
+  .footer-links a:hover { color: var(--text); }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav ul { display: none; }
+    .mission-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .steps-grid { grid-template-columns: 1fr 1fr; }
+    .features-grid { grid-template-columns: 1fr 1fr; }
+    .team-grid { grid-template-columns: 1fr 1fr; }
+    .stats { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 600px) {
+    .steps-grid { grid-template-columns: 1fr; }
+    .features-grid { grid-template-columns: 1fr; }
+    .team-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── PING BADGE ── */
+  .ping {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    position: relative;
+  }
+  .ping::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: rgba(60,255,176,0.3);
+    animation: pingAnim 1.5s ease-in-out infinite;
+  }
+  @keyframes pingAnim {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(2.5); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#">
+    <span class="logo-dot"></span>
+    <span class="logo-text">Still<span>Alive</span></span>
+  </a>
+  <ul>
+    <li><a href="#mission">Mission</a></li>
+    <li><a href="#how">How it Works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#team">Team</a></li>
+    <li><a href="#join" class="nav-cta">Join Us</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div>
+    <div class="hero-badge">
+      <span class="ping"></span>
+      &nbsp;Active Safety Network — Community Driven
+    </div>
+    <h1>You Are<br/><em>Never Alone</em></h1>
+    <p>StillAlive is a community safety platform that periodically checks on people living independently — sending alerts, finding routes, and mobilising local support when it matters most.</p>
+    <div class="hero-btns">
+      <a href="#join" class="btn-primary">Join the Society</a>
+      <a href="#how" class="btn-ghost">See How It Works</a>
+    </div>
+
+    <!-- Heartbeat SVG -->
+    <div class="heartbeat-wrap">
+      <svg viewBox="0 0 700 120" height="120">
+        <defs>
+          <linearGradient id="hbGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ff5f3f" stop-opacity="0"/>
+            <stop offset="30%" stop-color="#ff5f3f"/>
+            <stop offset="70%" stop-color="#ff9a3c"/>
+            <stop offset="100%" stop-color="#ff9a3c" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <polyline class="hb-line"
+          points="0,60 60,60 80,60 90,20 100,100 115,10 130,110 145,60 160,60 220,60 240,60 250,30 260,90 272,15 284,105 296,60 320,60 380,60 400,60 410,35 420,85 432,20 444,100 456,60 480,60 560,60 580,60 590,40 600,80 614,25 626,95 638,60 660,60 700,60"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat reveal">
+    <div class="stat-num">24/7</div>
+    <div class="stat-label">Continuous Monitoring</div>
+  </div>
+  <div class="stat reveal">
+    <div class="stat-num">SOS</div>
+    <div class="stat-label">One-Tap Emergency Alert</div>
+  </div>
+  <div class="stat reveal">
+    <div class="stat-num">∞</div>
+    <div class="stat-label">Community Support Network</div>
+  </div>
+</div>
+
+<!-- MISSION -->
+<section id="mission">
+  <div class="mission-grid">
+    <div class="reveal">
+      <span class="section-label">Our Mission</span>
+      <h2 class="section-title">Built for Those Who Carry the World Alone</h2>
+      <p class="section-body">
+        Millions of people — especially women — live and work independently, far from family. When something goes wrong, silence becomes the greatest danger. StillAlive breaks that silence.
+      </p>
+      <br/>
+      <p class="section-body">
+        We are building a local governance ecosystem: from real-time check-ins to offline routing, to a community-powered first-responder network connecting police, ambulance, and neighbours.
+      </p>
+      <br/>
+      <p class="section-body" style="color: var(--pulse); font-style: italic;">
+        "We don't want to beat anyone. We want to make this society so safe that danger has no room to exist."
+      </p>
+    </div>
+    <div class="mission-visual reveal">
+      <div class="orbit orbit-1"><div class="orbit-dot"></div></div>
+      <div class="orbit orbit-2"><div class="orbit-dot" style="top:auto;bottom:-4px;"></div></div>
+      <div class="phone-mock">
+        <div class="phone-notch"></div>
+        <div class="phone-pulse-ring">
+          <span class="pulse-icon">🛡️</span>
+        </div>
+        <div class="phone-status">● Safe &amp; Active</div>
+        <div style="font-size:0.65rem;color:var(--muted);text-align:center;letter-spacing:0.04em;">Last check-in: 2 min ago</div>
+        <div class="phone-rows">
+          <div class="phone-row active"></div>
+          <div class="phone-row"></div>
+          <div class="phone-row active" style="width:50%;"></div>
+          <div class="phone-row"></div>
+          <div class="phone-row active" style="width:85%;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="how-bg">
+  <div style="text-align:center;">
+    <span class="section-label">How It Works</span>
+    <h2 class="section-title" style="margin: 0 auto 0.5rem;">Simple. Quiet. Always Watching.</h2>
+    <p class="section-body" style="margin: 0 auto; text-align:center;">Four steps that could save a life.</p>
+  </div>
+  <div class="steps-grid">
+    <div class="step-card reveal">
+      <div class="step-num">01</div>
+      <div class="step-icon">📱</div>
+      <div class="step-title">Register &amp; Connect</div>
+      <div class="step-desc">Sign up, add your trusted contacts and default safe location. Your privacy is always protected.</div>
+    </div>
+    <div class="step-card reveal">
+      <div class="step-num">02</div>
+      <div class="step-icon">🔔</div>
+      <div class="step-title">Periodic Check-ins</div>
+      <div class="step-desc">The app quietly pings you at set intervals. One tap to confirm you're safe. Miss it — and alerts begin.</div>
+    </div>
+    <div class="step-card reveal">
+      <div class="step-num">03</div>
+      <div class="step-icon">🗺️</div>
+      <div class="step-title">Offline Safe Route</div>
+      <div class="step-desc">No signal? No problem. Locally downloaded maps show the shortest route to your safe location — always.</div>
+    </div>
+    <div class="step-card reveal">
+      <div class="step-num">04</div>
+      <div class="step-icon">🚨</div>
+      <div class="step-title">Community Response</div>
+      <div class="step-desc">If danger is flagged, nearby community members, police, ambulance, and fire services are alerted instantly.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <span class="section-label">Features</span>
+  <h2 class="section-title">What StillAlive Brings to Life</h2>
+
+  <div class="features-grid">
+    <div class="feat-card reveal">
+      <div class="feat-icon-wrap">💓</div>
+      <div class="feat-title">Live Presence Pulse</div>
+      <div class="feat-desc">Automated check-in pings ensure someone always knows you are safe. If you don't respond, trusted contacts are notified immediately.</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-icon-wrap">📡</div>
+      <div class="feat-title">Offline Map Routing</div>
+      <div class="feat-desc">Downloadable local maps with shortest-path algorithm to your home location — works even without mobile data or internet.</div>
+      <span class="feat-tag">Coming Soon</span>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-icon-wrap">🚨</div>
+      <div class="feat-title">One-Tap SOS</div>
+      <div class="feat-desc">A single press sends your live location, a distress signal, and contact info to local responders and your trusted network.</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-icon-wrap">🏘️</div>
+      <div class="feat-title">Locality Network</div>
+      <div class="feat-desc">Like Rapido but for safety — anyone in your locality with the app can respond to alerts, forming a human shield of care.</div>
+      <span class="feat-tag">Coming Soon</span>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-icon-wrap">🚒</div>
+      <div class="feat-title">Unified Emergency Dispatch</div>
+      <div class="feat-desc">Police, ambulance, fire brigade — all integrated into a single local governance response layer for maximum efficiency.</div>
+      <span class="feat-tag">Coming Soon</span>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-icon-wrap">🔒</div>
+      <div class="feat-title">Privacy First</div>
+      <div class="feat-desc">Your location is yours. Data is only shared with people you choose, and only when you need help. Full control, always.</div>
+    </div>
+  </div>
+</section>
+
+<!-- MANIFESTO -->
+<div class="manifesto">
+  <blockquote class="reveal">
+    "A society is only as safe as its <em>most vulnerable member.</em> We are here to make sure no one faces danger in silence — ever again."
+  </blockquote>
+  <cite>— StillAlive Society</cite>
+</div>
+
+<!-- TEAM -->
+<section id="team" class="team-bg">
+  <div style="text-align:center;">
+    <span class="section-label">The People Behind It</span>
+    <h2 class="section-title" style="margin: 0 auto 0.5rem;">Three Men. One Mission.</h2>
+    <p class="section-body" style="margin: 0 auto; text-align:center;">We started StillAlive Society because we believe community is the most powerful technology in the world.</p>
+  </div>
+  <div class="team-grid">
+    <div class="team-card reveal">
+      <div class="team-avatar">S</div>
+      <div class="team-name">Founder — 01</div>
+      <div class="team-role">Vision &amp; Strategy</div>
+      <div class="team-bio">Driven by the belief that no one should feel unsafe in their own city. Architecting the long-term roadmap for StillAlive's local governance model.</div>
+    </div>
+    <div class="team-card reveal">
+      <div class="team-avatar">A</div>
+      <div class="team-name">Founder — 02</div>
+      <div class="team-role">Technology &amp; Platform</div>
+      <div class="team-bio">Building the real-time safety infrastructure, offline routing systems, and the alert pipeline that powers the community response network.</div>
+    </div>
+    <div class="team-card reveal">
+      <div class="team-avatar">L</div>
+      <div class="team-name">Founder — 03</div>
+      <div class="team-role">Community &amp; Outreach</div>
+      <div class="team-bio">Connecting with neighbourhoods, local authorities, and civil society to grow the StillAlive movement from the ground up.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="join" class="cta-section">
+  <span class="section-label">Be Part of It</span>
+  <h2>The Society Starts <em style="color:var(--pulse);font-style:normal;">With You</em></h2>
+  <p>Whether you live alone, know someone who does, or simply believe in a safer society — join StillAlive and help us build the community this world deserves.</p>
+  <div style="display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;">
+    <a href="#" class="btn-primary">Join the Waitlist</a>
+    <a href="#" class="btn-ghost">Partner With Us</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-copy">
+    © 2026 <span>StillAlive Society</span>. Built with care, for everyone.
+  </div>
+  <div class="footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Contact</a>
+    <a href="#">Community</a>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), 80 * (Array.from(reveals).indexOf(entry.target) % 4));
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Nav scroll effect
+  window.addEventListener('scroll', () => {
+    document.querySelector('nav').style.borderBottomColor =
+      window.scrollY > 40 ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.08)';
+  });
+
+  // Animated counter for stats
+  function animCount(el, target, suffix='') {
+    let start = 0;
+    const step = () => {
+      start += Math.ceil(target / 60);
+      if (start >= target) { el.textContent = target + suffix; return; }
+      el.textContent = start + suffix;
+      requestAnimationFrame(step);
+    };
+    step();
+  }
+</script>
+</body>
+</html>
