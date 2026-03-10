@@ -1,4 +1,5 @@
 import os
+from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi import FastAPI, Request
@@ -37,10 +38,10 @@ setup_logging()
 def startup():
     Base.metadata.create_all(bind=engine)
 
+
 # -----------------------------
 # First Page
 # -----------------------------
-
 templates = Jinja2Templates(directory="app/templates")
 @app.get("/")
 def home(request: Request):
@@ -72,3 +73,19 @@ def get_pattern(name: str, request: Request):
         "type": "pattern",
         "url": f"{base_url}/media/{name}.png"
     }
+
+# -----------------------------
+# logs
+# -----------------------------
+
+@app.get("/logs")
+def get_logs():
+    log_file = "logs/app.log"
+
+    if not os.path.exists(log_file):
+        raise HTTPException(status_code=404, detail="Log file not found")
+
+    with open(log_file, "r") as f:
+        logs = f.readlines()
+
+    return {"logs": logs[-100:]}  # return last 100 lines

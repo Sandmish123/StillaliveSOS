@@ -8,6 +8,7 @@ class OTPRequestIn(BaseModel):
 class OTPVerifyIn(BaseModel):
     phone: str
     otp: str
+    fcm_token: str | None = None
 
 
 class TokenOut(BaseModel):

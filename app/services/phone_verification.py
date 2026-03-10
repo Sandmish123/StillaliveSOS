@@ -17,7 +17,7 @@ def verify_phone_number(phone: str):
 
     response = requests.get(url, params=params)
     data = response.json()
-    print("datattatattatta",data)
+    print("IN THE PHONE  VERIFICATION",data)
     if not data.get("valid"):
         raise HTTPException(
             status_code=400,
