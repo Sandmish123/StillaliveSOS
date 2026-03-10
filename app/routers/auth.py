@@ -93,6 +93,9 @@ def verify_otp(data: OTPVerifyIn, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.phone == data.phone).first()
     if not user:
         raise HTTPException(status_code=400, detail="User not found")
+    
+    if data.fcm_token:
+        user.fcm_token = data.fcm_token
 
     #  Create tokens
     access_token = create_access_token(
@@ -106,7 +109,7 @@ def verify_otp(data: OTPVerifyIn, db: Session = Depends(get_db)):
     )
 
 
-    # 💾 Save refresh token in DB
+    # Save refresh token in DB
     db_refresh = RefreshToken(
         token=refresh_token,
         user_id=str(user.id),

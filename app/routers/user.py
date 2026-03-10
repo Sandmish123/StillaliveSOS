@@ -16,7 +16,13 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     if exit_user:
         raise HTTPException(status_code=400, detail="User already exists")
 
-    new_user = User(phone=user.phone, name=user.name)
+    new_user = User(        
+        name=user.name,
+        phone=user.phone,
+        email=user.email,
+        dob=user.dob,
+        address=user.address
+    )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -34,8 +40,6 @@ def get_user(user_id: str, db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
-
-
 
 
 
