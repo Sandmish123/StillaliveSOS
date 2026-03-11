@@ -5,14 +5,18 @@ from typing import Optional, List
 
 class EmergencyContactCreate(BaseModel):
     name: str
-    phone: str
+    phone: List[str]
     relation: Optional[str] = None
+
+
+class EmergencyContactBulkCreate(BaseModel):
+    list_contacts: List[EmergencyContactCreate]
 
 
 class EmergencyContactResponse(BaseModel):
     id: UUID
     name: str
-    phone: str
+    phone: List[str]
     relation: Optional[str] = None
 
     class Config:
@@ -21,7 +25,7 @@ class EmergencyContactResponse(BaseModel):
 
 class EmergencyContactWrappedResponse(BaseModel):
     message: str
-    data: EmergencyContactResponse
+    data: List[EmergencyContactResponse]
 
 
 class EmergencyContactListResponse(BaseModel):
