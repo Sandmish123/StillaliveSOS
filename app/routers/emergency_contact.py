@@ -10,7 +10,7 @@ from app.models.emergency_contact import EmergencyContacts
 from app.models.user import User
 from app.schemas.emergency_contact import (
     EmergencyContactWrappedResponse,
-    EmergencyContactCreate,
+    EmergencyContactBulkCreate,
     EmergencyContactListResponse,
 )
 
@@ -23,23 +23,33 @@ router = APIRouter(
 
 @router.post("/", response_model=EmergencyContactWrappedResponse)
 def add_contacts(
-    data: EmergencyContactCreate,
+    data: EmergencyContactBulkCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    contact = EmergencyContacts(
-        user_id=current_user.id,
-        name=data.name,
-        phone=data.phone,
-        relation=data.relation,
-    )
-    db.add(contact)
+
+    contacts = []
+
+    for item in data.list_contacts:
+        contact = EmergencyContacts(
+            user_id=current_user.id,
+            name=item.name,
+            phone=item.phone,
+            relation=item.relation,
+        )
+
+        db.add(contact)
+        contacts.append(contact)
+
     db.commit()
-    db.refresh(contact)
+
+    for c in contacts:
+        db.refresh(c)
+
     return {
-        "message": "contact add successfully",
-        "data": contact
-        }
+        "message": "Contacts added successfully",
+        "data": contacts
+    }
 
 
 @router.get("/", response_model=EmergencyContactListResponse)
