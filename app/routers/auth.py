@@ -25,12 +25,6 @@ from app.core.security import (
     create_refresh_token,
     decode_access_token,
 )
-from app.models.user import User
-from app.models.otp import OTPRequest
-from app.models.refresh_token import RefreshToken
-from app.schemas.auth import OTPVerifyIn, OTPRequestIn, TokenOut
-from app.services.phone_verification import verify_phone_number
-
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -92,7 +86,7 @@ def verify_otp(data: OTPVerifyIn, db: Session = Depends(get_db)):
 
     user = db.query(User).filter(User.phone == data.phone).first()
     if not user:
-        raise HTTPException(status_code=400, detail="User not found")
+        return {"exist": 0}  # or raise HTTPException for security
     
     if data.fcm_token:
         user.fcm_token = data.fcm_token
@@ -112,7 +106,7 @@ def verify_otp(data: OTPVerifyIn, db: Session = Depends(get_db)):
     # Save refresh token in DB
     db_refresh = RefreshToken(
         token=refresh_token,
-        user_id=str(user.id),
+        user_id=user.id if isinstance(user.id, UUID) else UUID(str(user.id)),
     )
 
     db.add(db_refresh)
@@ -121,7 +115,8 @@ def verify_otp(data: OTPVerifyIn, db: Session = Depends(get_db)):
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
-        "token_type": "bearer"
+        "token_type": "bearer",
+        "exist":1
     }
 
 

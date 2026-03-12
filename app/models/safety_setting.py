@@ -8,5 +8,5 @@ class SafetySetting(Base):
 
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), primary_key=True)
 
-    checkin_interval_hour = Column(Integer, default=24)
-    grace_period_minutes = Column(Integer, default=60)
+    checkin_interval_minutes  = Column(Integer, default=5)
+    grace_period_minutes = Column(Integer, default=2)
