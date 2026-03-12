@@ -1,11 +1,16 @@
 from pydantic import BaseModel,EmailStr
 from uuid import UUID
 from datetime import date
+from typing import Optional
 
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    email: Optional[str] = None
+    dob: Optional[date] = None
+    address: Optional[str] = None
 
 class UserCreate(BaseModel):
     name: str
-    # phone: str
     email: EmailStr
     dob: date
     address: str

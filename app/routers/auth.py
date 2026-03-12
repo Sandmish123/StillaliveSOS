@@ -63,7 +63,7 @@ def request_otp(data: OTPRequestIn, db: Session = Depends(get_db)):
     db.commit()
 
     # MOCK OTP RESPONSE (for learning only)
-    return {"message": "OTP sent", "otp": otp}
+    return {"message": "OTP sent", "otp": otp, "user_id": str(user.id)}
 
 
 @router.post("/verify_otp", response_model=TokenOut)
