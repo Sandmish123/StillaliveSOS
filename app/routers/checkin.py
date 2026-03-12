@@ -30,7 +30,7 @@ def check_in(
         .first()
     )
 
-    interval_hours = settings.checkin_interval_hour if settings and settings.checkin_interval_hour else 1
+    # interval_hours = settings.checkin_interval_hour if settings and settings.checkin_interval_hour else 1
     # interval_minutes = interval_hours * 60
 
     # Get last check-in
@@ -47,7 +47,7 @@ def check_in(
         if last_time.tzinfo is None:
             last_time = last_time.replace(tzinfo=timezone.utc)
 
-        next_allowed = last_time + timedelta(hours=interval_hours)
+        next_allowed = last_time + timedelta(minutes=5)
 
         if now < next_allowed:
             remaining = next_allowed - now

@@ -18,7 +18,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
 
     new_user = User(        
         name=user.name,
-        phone=user.phone,
+        # phone=user.phone,
         email=user.email,
         dob=user.dob,
         address=user.address
