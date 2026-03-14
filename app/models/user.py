@@ -13,7 +13,17 @@ class User(Base):
     dob = Column(Date, nullable=True)
     address = Column(String, nullable=True)
     fcm_token = Column(String, nullable=True)
-    is_partial_completed=Column(Boolean, nullable=True)
-    is_fully_completed=Column(Boolean, nullable=True)
-
     
+    @property
+    def is_partial_completed(self):
+        return bool(self.phone and self.email)
+
+    @property
+    def is_fully_completed(self):
+        return all([
+            self.name,
+            self.phone,
+            self.email,
+            self.dob,
+            self.address
+        ])
