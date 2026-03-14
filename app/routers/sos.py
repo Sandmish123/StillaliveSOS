@@ -16,7 +16,7 @@ router = APIRouter(prefix="/sos", tags=["SOS"])
 def is_checkin_missed(
     last_checkin: datetime, interval_minutes: int, grace_minutes: int
 ) -> bool:
-    allowed_time = last_checkin + timedelta(minutes=interval_minutes, minutes=grace_minutes)
+    allowed_time = last_checkin + timedelta(minutes=interval_minutes + grace_minutes)
     return datetime.now() > allowed_time
 
 
