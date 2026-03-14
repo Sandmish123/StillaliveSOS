@@ -26,17 +26,27 @@ def update_user(
     db.refresh(db_user)
     return db_user
 
-
-@router.get("/me", response_model=UserResponse)
-def get_me(current_user: User = Depends(get_current_user)):
-    return current_user
-
-
 @router.get("/{user_id}", response_model=UserResponse)
 def get_user(user_id: str, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == str(user_id)).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+    
+    # Partial profile check
+    user.is_partial_completed = bool(user.phone and user.email)
+
+    # Full profile check
+    required_fields = [
+        user.name,
+        user.phone,
+        user.email,
+        user.dob,
+        user.address
+    ]
+
+    user.is_fully_completed = all(required_fields)
+    db.commit()
+    db.refresh(user)
     return user
 
 

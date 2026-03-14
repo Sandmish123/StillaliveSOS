@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Date
+from sqlalchemy import Column, String, Date, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from app.core.database import Base
@@ -13,3 +13,7 @@ class User(Base):
     dob = Column(Date, nullable=True)
     address = Column(String, nullable=True)
     fcm_token = Column(String, nullable=True)
+    is_partial_completed=Column(Boolean, nullable=True)
+    is_fully_completed=Column(Boolean, nullable=True)
+
+    
