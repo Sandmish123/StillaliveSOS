@@ -6,15 +6,15 @@ from uuid import UUID
 SECRET_KEY = "super-secret-change-later"
 ALGORITHM = "HS256"
 
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
-REFRESH_TOKEN_EXPIRE_DAYS = 1
+ACCESS_TOKEN_EXPIRE_DAYS = 7
+REFRESH_TOKEN_EXPIRE_DAYS = 30
 
 
 # -----------------------
 # Create Access Token
 # -----------------------
 def create_access_token(subject: str, user_id: UUID):
-    expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.now(timezone.utc) + timedelta(days=ACCESS_TOKEN_EXPIRE_DAYS)
 
     payload = {
         "sub": subject,

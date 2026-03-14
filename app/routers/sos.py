@@ -14,9 +14,9 @@ router = APIRouter(prefix="/sos", tags=["SOS"])
 
 
 def is_checkin_missed(
-    last_checkin: datetime, interval_hours: int, grace_minutes: int
+    last_checkin: datetime, interval_minutes: int, grace_minutes: int
 ) -> bool:
-    allowed_time = last_checkin + timedelta(hours=interval_hours, minutes=grace_minutes)
+    allowed_time = last_checkin + timedelta(minutes=interval_minutes, minutes=grace_minutes)
     return datetime.now() > allowed_time
 
 
@@ -25,8 +25,8 @@ def sos_status(db: Session = Depends(get_db), user: User = Depends(get_current_u
     # get safety setting (fallback defaults)
     settings = db.query(SafetySetting).filter(SafetySetting.user_id == user.id).first()
 
-    interval = settings.checkin_interval_hour if settings else 24
-    grace = settings.grace_period_minutes if settings else 60
+    interval = settings.checkin_interval_minutes if settings else 5
+    grace = settings.grace_period_minutes if settings else 2
 
     # get last check-in
     last_checkin = (
@@ -72,7 +72,7 @@ def sos_status(db: Session = Depends(get_db), user: User = Depends(get_current_u
     db.commit()
     db.refresh(sos)
 
-    # ⚠️ Notification sending will come later
+    # Notification sending will come later
     return {
         "status": "sos",
         "triggered_at": sos.triggered_at,

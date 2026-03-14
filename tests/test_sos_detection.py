@@ -19,12 +19,12 @@ def test_sos_triggered_for_missed_checkin():
     db.refresh(user)
 
     settings = SafetySetting(
-        user_id=user.id, checkin_interval_hour=1, grace_period_minutes=0
+        user_id=user.id, checkin_interval_minutes=1, grace_period_minutes=0
     )
     db.add(settings)
 
     old_checkin = Check_In(
-        user_id=user.id, checked_in_at=datetime.now() - timedelta(hours=2)
+        user_id=user.id, checked_in_at=datetime.now() - timedelta(minutes=2)
     )
     db.add(old_checkin)
     db.commit()

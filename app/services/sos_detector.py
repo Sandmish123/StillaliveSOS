@@ -31,7 +31,7 @@ def detect_missed_checkins(db: Session):
 
         deadline = (
             last_checkin.checked_in_at
-            + timedelta(hours=settings.checkin_interval_hour)
+            + timedelta(minutes=settings.checkin_interval_minutes)
             + timedelta(minutes=settings.grace_period_minutes)
         )
 

@@ -15,8 +15,6 @@ router = APIRouter(
     tags=["Check-In"],
 )
 
-
-
 @router.post("/")
 def check_in(
     db: Session = Depends(get_db),
@@ -29,9 +27,6 @@ def check_in(
         .filter(SafetySetting.user_id == current_user.id)
         .first()
     )
-
-    # interval_hours = settings.checkin_interval_hour if settings and settings.checkin_interval_hour else 1
-    # interval_minutes = interval_hours * 60
 
     # Get last check-in
     last_checkin = (
