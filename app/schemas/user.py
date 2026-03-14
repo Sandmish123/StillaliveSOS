@@ -23,6 +23,7 @@ class UserResponse(BaseModel):
     email: EmailStr | None = None
     dob: date | None = None
     address: str | None = None
-
+    is_partial_completed: Optional[bool] = None
+    is_fully_completed: Optional[bool] = None
     class Config:
         from_attributes = True
