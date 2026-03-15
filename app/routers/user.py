@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException ,status
 from sqlalchemy.orm import Session
 from app.models.otp import OTPRequest
 from app.models.sos_event import SOSEvent
@@ -34,26 +34,37 @@ def get_user(user_id: str, db: Session = Depends(get_db)):
     return user
 
 
-
-@router.delete("/me")
+@router.delete("/me", status_code=200)
 def delete_my_account(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    try:
+        # Delete OTP records
+        db.query(OTPRequest).filter(
+            OTPRequest.phone == current_user.phone
+        ).delete(synchronize_session=False)
 
-    # Delete OTP records
-    db.query(OTPRequest).filter(
-        OTPRequest.phone == current_user.phone
-    ).delete()
+        # Delete SOS events
+        db.query(SOSEvent).filter(
+            SOSEvent.user_id == current_user.id
+        ).delete(synchronize_session=False)
 
-    # Delete SOS events
-    db.query(SOSEvent).filter(
-        SOSEvent.user_id == current_user.id
-    ).delete()
+        # Delete user
+        db.delete(current_user)
 
-    # Delete user
-    db.delete(current_user)
+        # Commit transaction
+        db.commit()
 
-    db.commit()
+        return {
+            "success": True,
+            "message": "Account permanently deleted"
+        }
 
-    return {"message": "Account permanently deleted"}
+    except Exception as e:
+        db.rollback()
+
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to delete account"
+        )
